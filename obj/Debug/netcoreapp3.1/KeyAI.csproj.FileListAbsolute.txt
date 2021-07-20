@@ -1,0 +1,13 @@
+/home/pratyaksh/Development/KeyAI/bin/Debug/netcoreapp3.1/KeyAI
+/home/pratyaksh/Development/KeyAI/bin/Debug/netcoreapp3.1/KeyAI.deps.json
+/home/pratyaksh/Development/KeyAI/bin/Debug/netcoreapp3.1/KeyAI.runtimeconfig.json
+/home/pratyaksh/Development/KeyAI/bin/Debug/netcoreapp3.1/KeyAI.runtimeconfig.dev.json
+/home/pratyaksh/Development/KeyAI/bin/Debug/netcoreapp3.1/KeyAI.dll
+/home/pratyaksh/Development/KeyAI/bin/Debug/netcoreapp3.1/KeyAI.pdb
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.csprojAssemblyReference.cache
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.AssemblyInfoInputs.cache
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.AssemblyInfo.cs
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.csproj.CoreCompileInputs.cache
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.dll
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.pdb
+/home/pratyaksh/Development/KeyAI/obj/Debug/netcoreapp3.1/KeyAI.genruntimeconfig.cache
