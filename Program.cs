@@ -102,12 +102,6 @@ namespace KeyAI {
             while (!endTraining) {
                 if (RunIteration(qLearn)) endTraining = true;
             }
-
-            // Model model = new Model(trainingFileName, ngramLength);
-            // bool endTraining = false;
-            // while (!endTraining) {
-            //     if (RunIteration(model)) endTraining = true;
-            // }
         }
     }
 }
