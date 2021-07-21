@@ -4,23 +4,34 @@ using System.Collections.Generic;
 
 namespace KeyAI {
     class QLearn {
+        string trainingData;
         double[,,] table;
         int[,,] occurrences;
-        double explorationRate = 0.6;
-        double explorationHigh = 0.6;
-        double explorationLow = 0.0;
+
+        double explorationRate;
+        double explorationHigh;
+        double explorationLow;
+        int currentRound;
+        int numRounds;
+
         double learningRate;
         double discount;
-        string trainingData;
+
         static Random random = new Random();
 
         Dictionary<char, int> charToInt;
         Dictionary<int, char> intToChar;
 
-        public QLearn(string trainingData, double learningRate, double discount) {
+        public QLearn(string trainingData, double explorationLow, double explorationHigh, int numRounds, double learningRate, double discount) {
+            this.trainingData = trainingData;
+            this.explorationLow = explorationLow;
+            this.explorationHigh = explorationHigh;
+            this.numRounds = numRounds;
             this.learningRate = learningRate;
             this.discount = discount;
-            this.trainingData = trainingData;
+
+            explorationRate = explorationHigh;
+            currentRound = 0;
 
             charToInt = new Dictionary<char, int>();
             intToChar = new Dictionary<int, char>();
@@ -99,7 +110,7 @@ namespace KeyAI {
             string current = trainingData.Substring(random.Next(trainingData.Length - 1), 2);
             char newChar = NextChar(current);
 
-            while (current.Length <= maxLength) {
+            while (current.Length < maxLength) {
                 current += newChar;
                 newChar = NextChar(current.Substring(current.Length - 2));
             }
@@ -108,7 +119,6 @@ namespace KeyAI {
         }
 
         public void UpdateModel(string target, List<long> times) {
-            // learningRate = Math.Max(0.0, explorationRate - explorationLow);
             string current = "";
             for (int i = 0; i < target.Length; i++) {
                 if (i >= 3) current = current.Substring(1);
@@ -123,21 +133,20 @@ namespace KeyAI {
                         futureBest = Math.Max(futureBest, table[charIndex2, targetIndex, j]);
                     }
 
-                    // double futureMean = 0;
-                    // for (int j = 0; j < intToChar.Count; j++) {
-                    //     futureMean += table[charIndex2, targetIndex, j];
-                    // }
-                    // futureMean /= intToChar.Count;
                     table[charIndex1, charIndex2, targetIndex] += learningRate * (times[i] + discount * futureBest);
                 }
 
                 current += target[i];
             }
+        }
 
-            explorationRate -= 0.1;
-            if (explorationRate < explorationLow) explorationRate = explorationHigh;
-            Console.WriteLine();
-            Console.Write(explorationRate);
+        public void FinishRound() {
+            Console.Write($"    Round {currentRound + 1} of {numRounds}");
+            currentRound++;
+            if (currentRound >= numRounds) currentRound = 0;
+            
+            double roundCompletion = (double)currentRound / (double)numRounds;
+            explorationRate = roundCompletion * explorationLow + (1 - roundCompletion) * explorationHigh;
 
             using (StreamWriter streamWriter = new StreamWriter("model.txt")) {
                 for (int i = 0; i < intToChar.Count; i++) {

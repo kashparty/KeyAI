@@ -57,11 +57,22 @@ namespace KeyAI {
                 if (currentPos >= target.Length) doneTyping = true;
             }
 
-            if (!escaped) qLearn.UpdateModel(target, keyTimes);
-
             Console.ResetColor();
-            Console.WriteLine();
 
+            if (!escaped) {
+                Console.Write(new String(' ', Math.Max(0, 80 - target.Length)));
+
+                double wordsPerMinute = 0;
+                for (int i = 1; i < keyTimes.Count; i++) wordsPerMinute += keyTimes[i];
+                wordsPerMinute = ((double)(keyTimes.Count - 1) / 5.0) / (wordsPerMinute / (1000 * 60));
+
+                Console.Write($"    WPM: {Math.Round(wordsPerMinute)}".PadRight(11));
+
+                qLearn.UpdateModel(target, keyTimes);
+                qLearn.FinishRound();
+            }
+
+            Console.WriteLine();
             return escaped;
         }
 
@@ -85,7 +96,7 @@ namespace KeyAI {
             }
 
             string trainingData = PreProcess();
-            QLearn qLearn = new QLearn(trainingData, 0.1, 0.9);
+            QLearn qLearn = new QLearn(trainingData, 0.3, 1.0, 5, 0.5, 0.95);
 
             bool endTraining = false;
             while (!endTraining) {
