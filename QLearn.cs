@@ -55,6 +55,31 @@ namespace KeyAI {
                 }
                 current += trainingData[i];
             }
+
+            LoadModelIfExists();
+        }
+
+        private void LoadModelIfExists() {
+            if (File.Exists("model.txt")) {
+                using (StreamReader streamReader = new StreamReader("model.txt")) {
+                    string[] lines = streamReader.ReadToEnd().Split("\n");
+                    foreach (string line in lines) {
+                        if (line.Length <= 4) continue;
+                        string nGram = line.Substring(0, 3);
+                        double qValue = double.Parse(line.Substring(4));
+
+                        int charIndex1 = charToInt[nGram[0]];
+                        int charIndex2 = charToInt[nGram[1]];
+                        int charIndex3 = charToInt[nGram[2]];
+
+                        table[charIndex1, charIndex2, charIndex3] = qValue;
+                    }
+                }
+
+                Console.WriteLine("Using model stored in file.");
+            } else {
+                Console.WriteLine("Using new model.");
+            }
         }
 
         public char GreedyChar(string previous) {
