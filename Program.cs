@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace KeyAI {
     class Program {
@@ -20,8 +21,8 @@ namespace KeyAI {
             }
         }
 
-        private static bool RunIteration(Model model) {
-            string target = model.RandomString(80);
+        private static bool RunIteration(QLearn qLearn) {
+            string target = qLearn.RandomString(80);
             Console.Write(target);
 
             Console.SetCursorPosition(0, Console.CursorTop);
@@ -56,12 +57,22 @@ namespace KeyAI {
                 if (currentPos >= target.Length) doneTyping = true;
             }
 
-            if (!escaped) model.UpdateTimes(target, keyTimes);
+            if (!escaped) qLearn.UpdateModel(target, keyTimes);
 
             Console.ResetColor();
             Console.WriteLine();
 
             return escaped;
+        }
+
+        private static string PreProcess() {
+            string trainingData;
+            using (StreamReader streamReader = new StreamReader(trainingFileName)) {
+                trainingData = streamReader.ReadToEnd();
+            }
+
+            trainingData = Regex.Replace(trainingData, "[^a-zA-Z ]", "");
+            return trainingData;
         }
 
         static void Main(string[] args) {
@@ -73,11 +84,19 @@ namespace KeyAI {
                 Console.WriteLine("Training file exists.");
             }
 
-            Model model = new Model(trainingFileName, ngramLength);
+            string trainingData = PreProcess();
+            QLearn qLearn = new QLearn(trainingData, 0.1, 0.9);
+
             bool endTraining = false;
             while (!endTraining) {
-                if (RunIteration(model)) endTraining = true;
+                if (RunIteration(qLearn)) endTraining = true;
             }
+
+            // Model model = new Model(trainingFileName, ngramLength);
+            // bool endTraining = false;
+            // while (!endTraining) {
+            //     if (RunIteration(model)) endTraining = true;
+            // }
         }
     }
 }
