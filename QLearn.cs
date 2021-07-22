@@ -93,6 +93,8 @@ namespace KeyAI {
 
             for (int i = 0; i < intToChar.Count; i++) {
                 if (charIndex1 == charIndex2 && charIndex2 == i) continue;
+                if (charIndex2 == charToInt[' '] && charIndex2 == i) continue;
+
                 if (table[charIndex1, charIndex2, i] > bestScore) {
                     bestChar = intToChar[i];
                     bestScore = table[charIndex1, charIndex2, i];
@@ -119,6 +121,8 @@ namespace KeyAI {
             int j;
             for (j = 0; j < intToChar.Count; j++) {
                 if (charIndex1 == charIndex2 && charIndex2 == j) continue;
+                if (charIndex2 == charToInt[' '] && charIndex2 == j) continue;
+
                 randomScore -= occurrences[charIndex1, charIndex2, j];
                 if (randomScore <= 0) return intToChar[j];
             }
