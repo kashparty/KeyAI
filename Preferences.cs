@@ -5,14 +5,14 @@ using System.Text.Json;
 
 namespace KeyAI {
     class Preferences {
-        string trainingFileUrl;
-        string trainingFilePath;
-        int lineLength;
-        double explorationHigh;
-        double explorationLow;
-        int numRounds;
-        double learningRate;
-        double discount;
+        public string trainingFileUrl { get; set; }
+        public string trainingFilePath { get; set; }
+        public int lineLength { get; set; }
+        public double explorationHigh { get; set; }
+        public double explorationLow { get; set; }
+        public int numRounds { get; set; }
+        public double learningRate { get; set; }
+        public double discount { get; set; }
 
         public Preferences() {
             // Use the default preferences.
