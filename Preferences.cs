@@ -23,7 +23,7 @@ namespace KeyAI {
             explorationLow = 0.2;
             numRounds = 10;
             learningRate = 0.5;
-            discount = 0.95;
+            discount = 0.9;
         }
 
         public Preferences(string fileName) : this() {
