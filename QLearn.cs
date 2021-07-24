@@ -6,30 +6,21 @@ namespace KeyAI {
     class QLearn {
         string trainingData;
 
-        // Two tables: the first for Q-learning values, the second for occurrences of n-grams.
         double[,,] table;
         int[,,] occurrences;
 
-        // Exploration rate varies between the exploration high (at the beginning of a round) and
-        // the exploration low (at the end of a round). Higher exploration makes the model rely 
-        // more on random generation based on occurrences of n-grams, lower exploration makes the
-        // model prioritise the Q-learning values.
         double explorationRate;
         double explorationHigh;
         double explorationLow;
 
-        // The model trains in rounds, so we store the current round and the number of rounds in
-        // a full cycle of training.
         int currentRound;
         int numRounds;
 
-        // Used in the Q-learning update equation.
         double learningRate;
         double discount;
 
         static Random random = new Random();
         
-        // We need a two-way mapping from characters to integers and integers to characters.
         Dictionary<char, int> charToInt;
         Dictionary<int, char> intToChar;
 
@@ -44,7 +35,6 @@ namespace KeyAI {
             explorationRate = explorationHigh;
             currentRound = 0;
 
-            // Set up the two-way mapping dictionaries: charToInt and intToChar.
             charToInt = new Dictionary<char, int>();
             intToChar = new Dictionary<int, char>();
             int currentIndex = 0;
@@ -56,7 +46,6 @@ namespace KeyAI {
                 }
             }
 
-            // Create the Q-learning table and the n-gram occurrences table, and set up the occurrences.
             table = new double[charToInt.Count, charToInt.Count, charToInt.Count];
             occurrences = new int[charToInt.Count, charToInt.Count, charToInt.Count];
 
@@ -80,7 +69,6 @@ namespace KeyAI {
                     foreach (string line in lines) {
                         if (line.Length <= 4) continue;
 
-                        // Lines in the stored model are of the form "abc 12.345"
                         string nGram = line.Substring(0, 3);
                         double qValue = double.Parse(line.Substring(4));
 
@@ -99,7 +87,6 @@ namespace KeyAI {
         }
 
         public char GreedyChar(string previous) {
-            // We are using 3-grams so we only want to consider the previous 2 characters.
             previous = previous.Substring(previous.Length - 2);
 
             int charIndex1 = charToInt[previous[0]];
@@ -120,20 +107,16 @@ namespace KeyAI {
                 }
             }
 
-            // If all the Q-learning values are zero, then no "best" character exists - just choose randomly.
             if (bestChar == '\0') return RandomChar(previous);
-
             return bestChar;
         }
 
         public char RandomChar(string previous) {
-            // We are using 3-grams so we only want to consider the previous 2 characters.
             previous = previous.Substring(previous.Length - 2);
 
             int charIndex1 = charToInt[previous[0]];
             int charIndex2 = charToInt[previous[1]];
 
-            // We use weighted random choice. N-grams that occur more frequently are prioritised.
             int sumOfScores = 0;
             for (int i = 0; i < intToChar.Count; i++) {
                 sumOfScores += occurrences[charIndex1, charIndex2, i];
@@ -142,27 +125,22 @@ namespace KeyAI {
             int randomScore = random.Next(1, sumOfScores + 1);
             int j;
             for (j = 0; j < intToChar.Count; j++) {
-                // Avoid having 3 of the same character in a row, or 2 spaces in a row.
                 if (charIndex1 == charIndex2 && charIndex2 == j) continue;
                 if (charIndex2 == charToInt[' '] && charIndex2 == j) continue;
 
-                // If the random score runs down to zero on this character, then choose this character.
                 randomScore -= occurrences[charIndex1, charIndex2, j];
                 if (randomScore <= 0) return intToChar[j];
             }
 
-            // If there are no occurrences of the n-gram (unreachable I think) then choose a random character.
             return intToChar[random.Next(intToChar.Count)];
         }
 
         public char NextChar(string previous) {
-            // Based on the exploration rate, pursue a greedy or random strategy for the next character.
             if (random.NextDouble() > explorationRate) return GreedyChar(previous);
             else return RandomChar(previous);
         }
 
         public string RandomString(int maxLength) {
-            // Choose a random prompt string from the original training corpus.
             string current = trainingData.Substring(random.Next(trainingData.Length - 1), 2);
             char newChar = NextChar(current);
 
@@ -171,12 +149,10 @@ namespace KeyAI {
                 newChar = NextChar(current.Substring(current.Length - 2));
             }
 
-            // Leading and trailing whitespace is a hindrance to the user.
             return current.Trim();
         }
 
         public void UpdateModel(string target, List<long> times) {
-            // For each n-gram in the target, update the Q-learning value using the time taken to type the last character.
             string current = "";
             for (int i = 0; i < target.Length; i++) {
                 if (i >= 3) current = current.Substring(1);
@@ -203,18 +179,14 @@ namespace KeyAI {
         }
 
         public void FinishRound() {
-            // Display which round it is - this goes here because the model knows which round it is.
             Console.Write($"    Round {currentRound + 1} of {numRounds}");
             currentRound++;
 
-            // Reset the rounds when the final round is over.
             if (currentRound >= numRounds) currentRound = 0;
             
-            // Set the new exploration rate using the round number.
             double roundCompletion = (double)currentRound / (double)numRounds;
             explorationRate = roundCompletion * explorationLow + (1 - roundCompletion) * explorationHigh;
 
-            // Write the model data to a text file.
             using (StreamWriter streamWriter = new StreamWriter("model.txt")) {
                 for (int i = 0; i < intToChar.Count; i++) {
                     for (int j = 0; j < intToChar.Count; j++) {
