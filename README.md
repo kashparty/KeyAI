@@ -13,7 +13,7 @@ The tutor performs its training in a sequence of rounds. In each round, you will
 
 Over the course of one cycle, the behaviour of the tutor changes. At the beginning of a cycle, the tutor will give you text that is entirely randomly generated (but still English-like). This will not take into account your typing performance on various patterns of characters. As the cycle goes on, the tutor becomes more and more likely to challenge you by giving you sequences of characters that you have struggled with before.
 
-You can exit the typing tutor at any point by pressing the Escape key on your keyboard.
+You can exit the typing tutor at any point by pressing the `Escape` key on your keyboard.
 
 ## User preferences
 
