@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 namespace KeyAI {
     class Program {
         static Preferences preferences;
+        const string versionNumber = "0.1.0";
 
         static string[] menuOptions = { "Exit", "Typing tutor", "Help" };
 
@@ -139,9 +140,18 @@ namespace KeyAI {
             return userOption;
         }
 
+        private static void ShowHelp() {
+            Console.WriteLine($"This is KeyAI version {versionNumber}. Opening help page...");
+            string url = "https://github.com/KashParty/KeyAI/blob/master/README.md";
+            Process.Start(new ProcessStartInfo {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+
         static void Main(string[] args) {
             preferences = new Preferences("keyai.json");
-            Console.WriteLine("KeyAI 0.1.0");
+            Console.WriteLine($"KeyAI {versionNumber}.");
 
             bool done = false;
             while (!done) {
@@ -154,6 +164,9 @@ namespace KeyAI {
                         break;
                     case 1:
                         TrainingLoop();
+                        break;
+                    case 2:
+                        ShowHelp();
                         break;
                     default:
                         Console.WriteLine("Nothing here yet.");
