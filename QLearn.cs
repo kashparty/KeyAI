@@ -92,12 +92,10 @@ namespace KeyAI {
             int charIndex1 = charToInt[previous[0]];
             int charIndex2 = charToInt[previous[1]];
 
-            // Greedily choose the character whose Q-learning value is highest.
             char bestChar = '\0';
             double bestScore = 0;
 
             for (int i = 0; i < intToChar.Count; i++) {
-                // Avoid having 3 of the same character in a row, or 2 spaces in a row.
                 if (charIndex1 == charIndex2 && charIndex2 == i) continue;
                 if (charIndex2 == charToInt[' '] && charIndex2 == i) continue;
 
