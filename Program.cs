@@ -7,24 +7,22 @@ using System.Text.RegularExpressions;
 
 namespace KeyAI {
     class Program {
-        static string trainingFileUrl = "https://www.gutenberg.org/files/11/11-0.txt";
+        static Preferences preferences;
 
-        static string trainingFileName = "training.txt";
-        
-        static string[] menuOptions = {"Exit", "Typing tutor", "Change preferences", "Help"};
+        static string[] menuOptions = { "Exit", "Typing tutor", "Help" };
 
         private static bool IsTrainingFileDownloaded() {
-            return File.Exists(trainingFileName);
+            return File.Exists(preferences.trainingFilePath);
         }
 
         private static void DownloadTrainingFile() {
             using (WebClient client = new WebClient()) {
-                client.DownloadFile(trainingFileUrl, trainingFileName);
+                client.DownloadFile(preferences.trainingFileUrl, preferences.trainingFilePath);
             }
         }
 
         private static bool RunRound(QLearn qLearn) {
-            string target = qLearn.RandomString(80);
+            string target = qLearn.RandomString(preferences.lineLength);
             Console.Write(target);
 
             Console.SetCursorPosition(0, Console.CursorTop);
@@ -63,7 +61,7 @@ namespace KeyAI {
             Console.ResetColor();
 
             if (!escaped) {
-                Console.Write(new String(' ', Math.Max(0, 80 - target.Length)));
+                Console.Write(new String(' ', Math.Max(0, preferences.lineLength - target.Length)));
 
                 double wordsPerMinute = 0;
                 for (int i = 1; i < keyTimes.Count; i++) wordsPerMinute += keyTimes[i];
@@ -82,7 +80,7 @@ namespace KeyAI {
 
         private static string PreProcess() {
             string trainingData;
-            using (StreamReader streamReader = new StreamReader(trainingFileName)) {
+            using (StreamReader streamReader = new StreamReader(preferences.trainingFilePath)) {
                 trainingData = streamReader.ReadToEnd();
             }
 
@@ -102,7 +100,14 @@ namespace KeyAI {
             }
 
             string trainingData = PreProcess();
-            QLearn qLearn = new QLearn(trainingData, 0.3, 1.0, 5, 0.5, 0.95);
+            QLearn qLearn = new QLearn(
+                trainingData,
+                preferences.explorationLow,
+                preferences.explorationHigh,
+                preferences.numRounds,
+                preferences.learningRate,
+                preferences.discount
+            );
             Console.WriteLine();
 
             bool endTraining = false;
@@ -135,9 +140,8 @@ namespace KeyAI {
         }
 
         static void Main(string[] args) {
+            preferences = new Preferences("keyai.json");
             Console.WriteLine("KeyAI 0.1.0");
-
-            Preferences pref = new Preferences("keyai.json");
 
             bool done = false;
             while (!done) {
