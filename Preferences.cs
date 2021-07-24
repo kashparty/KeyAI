@@ -26,21 +26,44 @@ namespace KeyAI {
             discount = 0.95;
         }
 
-        public Preferences(string fileName) : base() {
+        public Preferences(string fileName) : this() {
             if (!File.Exists(fileName)) return;
 
             using (StreamReader streamReader = new StreamReader(fileName)) {
                 string fileString = streamReader.ReadToEnd();
                 Dictionary<string, dynamic> data = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(fileString);
 
-                if (data.ContainsKey("trainingFileUrl")) trainingFileUrl = data["trainingFileUrl"];
-                if (data.ContainsKey("trainingFilePath")) trainingFilePath = data["trainingFilePath"];
-                if (data.ContainsKey("lineLength")) lineLength = data["lineLength"];
-                if (data.ContainsKey("explorationHigh")) explorationHigh = data["explorationHigh"];
-                if (data.ContainsKey("explorationLow")) explorationLow = data["explorationLow"];
-                if (data.ContainsKey("numRounds")) numRounds = data["numRounds"];
-                if (data.ContainsKey("learningRate")) learningRate = data["learningRate"];
-                if (data.ContainsKey("discount")) discount = data["discount"];
+                if (data.ContainsKey("trainingFileUrl")) {
+                    trainingFileUrl = data["trainingFileUrl"].GetString();
+                }
+
+                if (data.ContainsKey("trainingFilePath")) {
+                    trainingFilePath = data["trainingFilePath"].GetString();
+                }
+
+                if (data.ContainsKey("lineLength")) {
+                    lineLength = data["lineLength"].GetInt32();
+                }
+
+                if (data.ContainsKey("explorationHigh")) {
+                    explorationHigh = data["explorationHigh"].GetDouble();
+                }
+
+                if (data.ContainsKey("explorationLow")) {
+                    explorationLow = data["explorationLow"].GetDouble();
+                }
+
+                if (data.ContainsKey("numRounds")) {
+                    numRounds = data["numRounds"].GetInt32();
+                }
+
+                if (data.ContainsKey("learningRate")) {
+                    learningRate = data["learningRate"].GetDouble();
+                }
+
+                if (data.ContainsKey("discount")) {
+                    discount = data["discount"].GetDouble();
+                }
             }
         }
     }

@@ -137,6 +137,8 @@ namespace KeyAI {
         static void Main(string[] args) {
             Console.WriteLine("KeyAI 0.1.0");
 
+            Preferences pref = new Preferences("keyai.json");
+
             bool done = false;
             while (!done) {
                 DisplayMainMenu();
