@@ -38,5 +38,6 @@ The following table describes the parameters that the user can change. At the mo
 | `explorationLow`   | Double  | The probability of a character being produced randomly (from the corpus) as opposed to via the Q-learning algorithm at the end of a cycle. | `0.2`                                         |
 | `numRounds`        | Integer | The number of rounds in a cycle.                             | `10`                                          |
 | `learningRate`     | Double  | The learning rate of the Q-learning algorithm, used in the Q-learning update equation. | `0.5`                                         |
-| `discount`         | Double  | The discount factor used in the Q-learning update equation.  | `0.9`                                        |
+| `discount`         | Double  | The discount factor used in the Q-learning update equation.  | `0.9`                                         |
+| `color`            | String  | One of `Black`, `Blue`, `Cyan`, `DarkBlue`, `DarkCyan`, `DarkGray`, `DarkGreen`, `DarkMagenta`, `DarkRed`, `DarkYellow`, `Gray`, `Green`, `Magenta`, `Red`, `White` or `Yellow`. | `Green`                                       |
 

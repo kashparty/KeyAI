@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace KeyAI {
     class Program {
         static Preferences preferences;
-        const string versionNumber = "0.1.0";
+        const string versionNumber = "0.2.0";
 
         static string[] menuOptions = { "Exit", "Typing tutor", "Help" };
 
@@ -27,7 +27,7 @@ namespace KeyAI {
             Console.Write(target);
 
             Console.SetCursorPosition(0, Console.CursorTop);
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = preferences.color;
 
             bool doneTyping = false;
             bool escaped = false;

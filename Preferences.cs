@@ -13,6 +13,7 @@ namespace KeyAI {
         public int numRounds { get; set; }
         public double learningRate { get; set; }
         public double discount { get; set; }
+        public ConsoleColor color { get; set; }
 
         public Preferences() {
             // Use the default preferences.
@@ -24,6 +25,7 @@ namespace KeyAI {
             numRounds = 10;
             learningRate = 0.5;
             discount = 0.9;
+            color = ConsoleColor.Green;
         }
 
         public Preferences(string fileName) : this() {
@@ -63,6 +65,17 @@ namespace KeyAI {
 
                 if (data.ContainsKey("discount")) {
                     discount = data["discount"].GetDouble();
+                }
+
+                if (data.ContainsKey("color")) {
+                    object chosenColor;
+                    if (Enum.TryParse(typeof(ConsoleColor), data["color"].GetString(), out chosenColor)) {
+                        color = (ConsoleColor)chosenColor;
+                    } else {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{data["color"].GetString()} is not an available color.");
+                        Console.ResetColor();
+                    }
                 }
             }
         }
