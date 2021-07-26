@@ -85,7 +85,13 @@ namespace KeyAI {
                 trainingData = streamReader.ReadToEnd();
             }
 
-            trainingData = Regex.Replace(trainingData, "[^a-zA-Z ]", "");
+            string regexString = "[^";
+            if (preferences.includeLowercase) regexString += "a-z";
+            if (preferences.includeUppercase) regexString += "A-Z";
+            if (preferences.includeDigits) regexString += "0-9";
+            if (preferences.includePunctuation) regexString += ".,!:;\"\'-()";
+            regexString += " ]";
+            trainingData = Regex.Replace(trainingData, regexString, "");
             return trainingData;
         }
 

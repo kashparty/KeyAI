@@ -20,7 +20,7 @@ namespace KeyAI {
         double discount;
 
         static Random random = new Random();
-        
+
         Dictionary<char, int> charToInt;
         Dictionary<int, char> intToChar;
 
@@ -53,7 +53,9 @@ namespace KeyAI {
             for (int i = 0; i < trainingData.Length; i++) {
                 if (i >= 3) current = current.Substring(1);
                 if (current.Length == 2) {
-                    occurrences[charToInt[current[0]], charToInt[current[1]], charToInt[trainingData[i]]]++;
+                    if (charToInt.ContainsKey(current[0]) && charToInt.ContainsKey(current[1]) && charToInt.ContainsKey(trainingData[i])) {
+                        occurrences[charToInt[current[0]], charToInt[current[1]], charToInt[trainingData[i]]]++;
+                    }
                 }
                 current += trainingData[i];
             }
@@ -71,6 +73,8 @@ namespace KeyAI {
 
                         string nGram = line.Substring(0, 3);
                         double qValue = double.Parse(line.Substring(4));
+
+                        if (!charToInt.ContainsKey(nGram[0]) || !charToInt.ContainsKey(nGram[1]) || !charToInt.ContainsKey(nGram[2])) continue;
 
                         int charIndex1 = charToInt[nGram[0]];
                         int charIndex2 = charToInt[nGram[1]];
@@ -181,7 +185,7 @@ namespace KeyAI {
             currentRound++;
 
             if (currentRound >= numRounds) currentRound = 0;
-            
+
             double roundCompletion = (double)currentRound / (double)numRounds;
             explorationRate = roundCompletion * explorationLow + (1 - roundCompletion) * explorationHigh;
 

@@ -14,6 +14,10 @@ namespace KeyAI {
         public double learningRate { get; set; }
         public double discount { get; set; }
         public ConsoleColor color { get; set; }
+        public bool includeUppercase { get; set; }
+        public bool includeLowercase { get; set; }
+        public bool includeDigits { get; set; }
+        public bool includePunctuation { get; set; }
 
         public Preferences() {
             // Use the default preferences.
@@ -25,7 +29,12 @@ namespace KeyAI {
             numRounds = 10;
             learningRate = 0.5;
             discount = 0.9;
+
             color = ConsoleColor.Green;
+            includeUppercase = true;
+            includeLowercase = true;
+            includeDigits = false;
+            includePunctuation = false;
         }
 
         public Preferences(string fileName) : this() {
@@ -76,6 +85,22 @@ namespace KeyAI {
                         Console.WriteLine($"{data["color"].GetString()} is not an available color.");
                         Console.ResetColor();
                     }
+                }
+
+                if (data.ContainsKey("includeUppercase")) {
+                    includeUppercase = data["includeUppercase"].GetBoolean();
+                }
+
+                if (data.ContainsKey("includeLowercase")) {
+                    includeLowercase = data["includeLowercase"].GetBoolean();
+                }
+
+                if (data.ContainsKey("includeDigits")) {
+                    includeDigits = data["includeDigits"].GetBoolean();
+                }
+
+                if (data.ContainsKey("includePunctuation")) {
+                    includePunctuation = data["includePunctuation"].GetBoolean();
                 }
             }
         }
