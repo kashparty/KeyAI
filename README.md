@@ -23,6 +23,7 @@ You can customise a variety of aspects of the typing tutor's behaviour. In order
     "trainingFileUrl": "https://www.gutenberg.org/files/98/98-0.txt",
     "lineLength": 100,
     "learningRate": 0.25,
+    "color": "Magenta"
 }
 ```
 
@@ -38,5 +39,5 @@ The following table describes the parameters that the user can change. At the mo
 | `numRounds`        | Integer | The number of rounds in a cycle.                             | `10`                                          |
 | `learningRate`     | Double  | The learning rate of the Q-learning algorithm, used in the Q-learning update equation. | `0.5`                                         |
 | `discount`         | Double  | The discount factor used in the Q-learning update equation.  | `0.9`                                         |
-| `color`            | String  | One of `Black`, `Blue`, `Cyan`, `DarkBlue`, `DarkCyan`, `DarkGray`, `DarkGreen`, `DarkMagenta`, `DarkRed`, `DarkYellow`, `Gray`, `Green`, `Magenta`, `Red`, `White` or `Yellow`. | `Green`                                       |
+| `color`            | String  | The color used to show completed characters in the typing tutor. One of `Black`, `Blue`, `Cyan`, `DarkBlue`, `DarkCyan`, `DarkGray`, `DarkGreen`, `DarkMagenta`, `DarkRed`, `DarkYellow`, `Gray`, `Green`, `Magenta`, `Red`, `White` or `Yellow`. | `Green`                                       |
 
