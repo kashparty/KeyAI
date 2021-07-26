@@ -27,17 +27,20 @@ You can customise a variety of aspects of the typing tutor's behaviour. In order
 }
 ```
 
-The following table describes the parameters that the user can change. At the moment, I haven't tested the default parameters very much, so there is no guarantee that these are good defaults.
+The following table describes the parameters that the user can change. At the moment, I haven't tested the default parameters very much, so there is no guarantee that these are good defaults. The program will currently not work if you set `includeUppercase`, `includeLowercase`, `includeDigits` and `includePunctuation` all to false.
 
-| Name               | Type    | Description                                                  | Default                                       |
-| :----------------- | ------- | ------------------------------------------------------------ | --------------------------------------------- |
-| `trainingFileUrl`  | String  | The URL from which to download the corpus used by the model to generate English-like text. | `https://www.gutenberg.org/files/11/11-0.txt` |
-| `trainingFilePath` | String  | The location of the text file where the corpus should be stored. | `training.txt`                                |
-| `lineLength`       | Integer | The maximum length (in characters) of a line of text that the user types in one round. | `80`                                          |
-| `explorationHigh`  | Double  | The probability of a character being produced randomly (from the corpus) as opposed to via the Q-learning algorithm at the beginning of a cycle. | `1.0`                                         |
-| `explorationLow`   | Double  | The probability of a character being produced randomly (from the corpus) as opposed to via the Q-learning algorithm at the end of a cycle. | `0.2`                                         |
-| `numRounds`        | Integer | The number of rounds in a cycle.                             | `10`                                          |
-| `learningRate`     | Double  | The learning rate of the Q-learning algorithm, used in the Q-learning update equation. | `0.5`                                         |
-| `discount`         | Double  | The discount factor used in the Q-learning update equation.  | `0.9`                                         |
-| `color`            | String  | The color used to show completed characters in the typing tutor. One of `Black`, `Blue`, `Cyan`, `DarkBlue`, `DarkCyan`, `DarkGray`, `DarkGreen`, `DarkMagenta`, `DarkRed`, `DarkYellow`, `Gray`, `Green`, `Magenta`, `Red`, `White` or `Yellow`. | `Green`                                       |
-
+| Name                 | Type    | Description                                                  | Default                                       |
+| :------------------- | ------- | ------------------------------------------------------------ | --------------------------------------------- |
+| `trainingFileUrl`    | String  | The URL from which to download the corpus used by the model to generate English-like text. | `https://www.gutenberg.org/files/11/11-0.txt` |
+| `trainingFilePath`   | String  | The location of the text file where the corpus should be stored. | `training.txt`                                |
+| `lineLength`         | Integer | The maximum length (in characters) of a line of text that the user types in one round. | `80`                                          |
+| `explorationHigh`    | Double  | The probability of a character being produced randomly (from the corpus) as opposed to via the Q-learning algorithm at the beginning of a cycle. | `1.0`                                         |
+| `explorationLow`     | Double  | The probability of a character being produced randomly (from the corpus) as opposed to via the Q-learning algorithm at the end of a cycle. | `0.2`                                         |
+| `numRounds`          | Integer | The number of rounds in a cycle.                             | `10`                                          |
+| `learningRate`       | Double  | The learning rate of the Q-learning algorithm, used in the Q-learning update equation. | `0.5`                                         |
+| `discount`           | Double  | The discount factor used in the Q-learning update equation.  | `0.9`                                         |
+| `color`              | String  | The color used to show completed characters in the typing tutor. One of `Black`, `Blue`, `Cyan`, `DarkBlue`, `DarkCyan`, `DarkGray`, `DarkGreen`, `DarkMagenta`, `DarkRed`, `DarkYellow`, `Gray`, `Green`, `Magenta`, `Red`, `White` or `Yellow`. | `Green`                                       |
+| `includeUppercase`   | Boolean | Whether to include uppercase characters in the typing tutor. | `true`                                        |
+| `includeLowercase`   | Boolean | Whether to include lowercase characters in the typing tutor. You probably want to keep this set to `true`. | `true`                                        |
+| `includeDigits`      | Boolean | Whether to include the digits 0 to 9 in the typing tutor.    | `false`                                       |
+| `includePunctuation` | Boolean | Whether to include the characters `.,!:;"'-()` in the typing tutor. | `false`                                       |
