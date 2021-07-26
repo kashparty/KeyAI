@@ -1,5 +1,7 @@
 # KeyAI
 
+[![](https://tokei.rs/b1/github/kashparty/keyai)](https://github.com/kashparty/keyai)
+
 KeyAI is a typing tutor with "intelligent learning capabilities". As you learn to type faster, it learns the patterns that slow you down. It then gives you those patterns to practise more often.
 
 ## Usage
