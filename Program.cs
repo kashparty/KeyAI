@@ -4,13 +4,14 @@ using System.Net;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace KeyAI {
     class Program {
         static Preferences preferences;
         const string versionNumber = "0.2.0";
 
-        static string[] menuOptions = { "Exit", "Typing tutor", "Help" };
+        static string[] menuOptions = { "Exit", "Typing tutor", "Statistics", "Help" };
 
         private static bool IsTrainingFileDownloaded() {
             return File.Exists(preferences.trainingFilePath);
@@ -155,6 +156,36 @@ namespace KeyAI {
             });
         }
 
+        private static void ShowStatistics() {
+            if (!File.Exists("model.txt")) {
+                Console.WriteLine("No data to show yet. Come back after using the typing tutor.");
+                return;
+            }
+
+            using (StreamReader streamReader = new StreamReader("model.txt")) {
+                List<Tuple<string, double>> modelData = new List<Tuple<string, double>>();
+                string[] lines = streamReader.ReadToEnd().Split("\n");
+
+                foreach (string line in lines) {
+                    if (line.Length <= 4) continue;
+
+                    string nGram = line.Substring(0, 3);
+                    double qValue = double.Parse(line.Substring(4));
+
+                    modelData.Add(new Tuple<string, double>(nGram, qValue));
+                }
+
+                modelData.OrderByDescending(d => d.Item2);
+
+                Console.ForegroundColor= ConsoleColor.Yellow;
+                Console.WriteLine("These are your slowest patterns:");
+                for (int i = 0; i < Math.Min(modelData.Count, 5); i++) {
+                    Console.WriteLine($"{i + 1}. {modelData[i].Item1}");
+                }
+                Console.ResetColor();
+            }
+        }
+
         static void Main(string[] args) {
             preferences = new Preferences("keyai.json");
             Console.WriteLine($"KeyAI {versionNumber}.");
@@ -172,6 +203,9 @@ namespace KeyAI {
                         TrainingLoop();
                         break;
                     case 2:
+                        ShowStatistics();
+                        break;
+                    case 3:
                         ShowHelp();
                         break;
                     default:
