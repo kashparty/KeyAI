@@ -33,6 +33,8 @@ namespace KeyAI {
             bool doneTyping = false;
             bool escaped = false;
             int currentPos = 0;
+            int mistakes = 0;
+            bool currentMistake = false;
 
             Stopwatch stopwatch = new Stopwatch();
             List<long> keyTimes = new List<long>();
@@ -53,8 +55,15 @@ namespace KeyAI {
                     keyTimes.Add(stopwatch.ElapsedMilliseconds);
                     Console.Write(pressedKey.KeyChar);
                     currentPos++;
+                    
+                    if (currentMistake) {
+                        mistakes++;
+                        currentMistake = false;
+                    }
 
                     stopwatch.Restart();
+                } else {
+                    currentMistake = true;
                 }
 
                 if (currentPos >= target.Length) doneTyping = true;
@@ -70,6 +79,9 @@ namespace KeyAI {
                 wordsPerMinute = ((double)(keyTimes.Count - 1) / 5.0) / (wordsPerMinute / (1000 * 60));
 
                 Console.Write($"    WPM: {Math.Round(wordsPerMinute)}".PadRight(11));
+
+                double accuracy = (double)(keyTimes.Count - mistakes) * 100.0 / keyTimes.Count;
+                Console.Write($"    Accuracy: {Math.Round(accuracy)}".PadRight(17));
 
                 qLearn.UpdateModel(target, keyTimes);
                 qLearn.FinishRound();
