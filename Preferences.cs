@@ -103,6 +103,12 @@ namespace KeyAI {
                     includePunctuation = data["includePunctuation"].GetBoolean();
                 }
             }
+
+            if (!includeLowercase && !includeUppercase && !includeDigits && !includePunctuation) {
+                Console.WriteLine("You have included no characters. Defaulting to lowercase and uppercase characters.");
+                includeLowercase = true;
+                includeUppercase = true;
+            }
         }
     }
 }
