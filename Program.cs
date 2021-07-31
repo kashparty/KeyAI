@@ -77,7 +77,6 @@ namespace KeyAI {
                 double wordsPerMinute = 0;
                 for (int i = 1; i < keyTimes.Count; i++) wordsPerMinute += keyTimes[i];
                 wordsPerMinute = ((double)(keyTimes.Count - 1) / 5.0) / (wordsPerMinute / (1000 * 60));
-
                 Console.Write($"    WPM: {Math.Round(wordsPerMinute)}".PadRight(11));
 
                 double accuracy = (double)(keyTimes.Count - mistakes) * 100.0 / keyTimes.Count;
@@ -104,6 +103,7 @@ namespace KeyAI {
             if (preferences.includeDigits) regexString += "0-9";
             if (preferences.includePunctuation) regexString += ".,!:;\"\'-()";
             regexString += " ]";
+
             trainingData = Regex.Replace(trainingData, regexString, "");
             return trainingData;
         }
