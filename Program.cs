@@ -233,7 +233,7 @@ namespace KeyAI {
                     modelData.Add(new Tuple<string, double>(nGram, qValue));
                 }
 
-                modelData.OrderByDescending(d => d.Item2);
+                modelData = modelData.OrderByDescending(d => d.Item2).ToList();
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("These are your slowest patterns:");
