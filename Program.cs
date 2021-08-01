@@ -11,7 +11,7 @@ namespace KeyAI {
         static Preferences preferences;
         const string versionNumber = "0.2.0";
 
-        static string[] menuOptions = { "Exit", "Typing tutor", "Statistics", "Help" };
+        static string[] menuOptions = { "Exit", "Typing tutor", "Statistics", "Help", "Reset progress" };
 
         private static bool IsTrainingFileDownloaded() {
             return File.Exists(preferences.trainingFilePath);
@@ -244,6 +244,18 @@ namespace KeyAI {
             }
         }
 
+        private static void ResetProgress() {
+            Console.Write("Are you sure you want to reset your progress? (Y/N): ");
+
+            if (Console.ReadLine().ToUpper().Trim() == "Y") {
+                if (File.Exists("model.txt")) {
+                    File.Delete("model.txt");
+                }
+
+                Console.WriteLine("Progress has been reset.");
+            }
+        }
+
         static void Main(string[] args) {
             preferences = new Preferences("keyai.json");
             Console.WriteLine($"KeyAI {versionNumber}.");
@@ -265,6 +277,9 @@ namespace KeyAI {
                         break;
                     case 3:
                         ShowHelp();
+                        break;
+                    case 4:
+                        ResetProgress();
                         break;
                     default:
                         Console.WriteLine("Nothing here yet.");
