@@ -154,29 +154,23 @@ namespace KeyAI {
             return current.Trim();
         }
 
-        public void UpdateModel(string target, List<long> times) {
-            string current = "";
-            for (int i = 0; i < target.Length; i++) {
-                if (i >= 3) current = current.Substring(1);
-                if (current.Length == 2) {
-                    int charIndex1 = charToInt[current[0]];
-                    int charIndex2 = charToInt[current[1]];
-                    int targetIndex = charToInt[target[i]];
+        public void UpdateModel(List<Tuple<string, long>> times) {
+            for (int i = 0; i < times.Count; i++) {
+                int charIndex1 = charToInt[times[i].Item1[0]];
+                int charIndex2 = charToInt[times[i].Item1[1]];
+                int charIndex3 = charToInt[times[i].Item1[2]];
 
-                    // We break the update equation into parts. First we "forget" some of the old value.
-                    table[charIndex1, charIndex2, targetIndex] -= learningRate * table[charIndex1, charIndex2, targetIndex];
+                // We break the update equation into parts. First we "forget" some of the old value.
+                table[charIndex1, charIndex2, charIndex3] -= learningRate * table[charIndex1, charIndex2, charIndex3];
 
-                    // Then we calculate the estimated best-case future value.
-                    double futureBest = 0;
-                    for (int j = 0; j < intToChar.Count; j++) {
-                        futureBest = Math.Max(futureBest, table[charIndex2, targetIndex, j]);
-                    }
-
-                    // Finally, we update using the reward (time taken) and the discounted best-case future value.
-                    table[charIndex1, charIndex2, targetIndex] += learningRate * (times[i] + discount * futureBest);
+                // Then we calculate the estimated best-case future value.
+                double futureBest = 0;
+                for (int j = 0; j < intToChar.Count; j++) {
+                    futureBest = Math.Max(futureBest, table[charIndex2, charIndex3, j]);
                 }
 
-                current += target[i];
+                // Finally, we update using the reward (time taken) and the discounted best-case future value.
+                table[charIndex1, charIndex2, charIndex3] += learningRate * (times[i].Item2 + discount * futureBest);
             }
         }
 

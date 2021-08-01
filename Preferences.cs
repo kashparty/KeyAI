@@ -18,7 +18,8 @@ namespace KeyAI {
         public bool includeLowercase { get; set; }
         public bool includeDigits { get; set; }
         public bool includePunctuation { get; set; }
-
+        public bool allowSkip { get; set; }
+        public int skipLength { get; set; }
         public Preferences() {
             // Use the default preferences.
             trainingFileUrl = "https://www.gutenberg.org/files/11/11-0.txt";
@@ -35,6 +36,8 @@ namespace KeyAI {
             includeLowercase = true;
             includeDigits = false;
             includePunctuation = false;
+            allowSkip = true;
+            skipLength = 3;
         }
 
         public Preferences(string fileName) : this() {
@@ -42,7 +45,13 @@ namespace KeyAI {
 
             using (StreamReader streamReader = new StreamReader(fileName)) {
                 string fileString = streamReader.ReadToEnd();
-                Dictionary<string, dynamic> data = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(fileString);
+
+                Dictionary<string, dynamic> data;
+                try {
+                    data = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(fileString);
+                } catch (JsonException) {
+                    return;
+                }
 
                 if (data.ContainsKey("trainingFileUrl")) {
                     trainingFileUrl = data["trainingFileUrl"].GetString();
@@ -101,6 +110,14 @@ namespace KeyAI {
 
                 if (data.ContainsKey("includePunctuation")) {
                     includePunctuation = data["includePunctuation"].GetBoolean();
+                }
+
+                if (data.ContainsKey("allowSkip")) {
+                    allowSkip = data["allowSkip"].GetBoolean();
+                }
+
+                if (data.ContainsKey("skipLength")) {
+                    skipLength = data["skipLength"].GetInt32();
                 }
             }
 

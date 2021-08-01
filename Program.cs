@@ -23,6 +23,74 @@ namespace KeyAI {
             }
         }
 
+        // private static bool RunRound(QLearn qLearn) {
+        //     string target = qLearn.RandomString(preferences.lineLength);
+        //     Console.Write(target);
+
+        //     Console.SetCursorPosition(0, Console.CursorTop);
+        //     Console.ForegroundColor = preferences.color;
+
+        //     bool doneTyping = false;
+        //     bool escaped = false;
+        //     int currentPos = 0;
+        //     int mistakes = 0;
+        //     bool currentMistake = false;
+
+        //     Stopwatch stopwatch = new Stopwatch();
+        //     List<long> keyTimes = new List<long>();
+
+        //     stopwatch.Start();
+
+        //     while (!doneTyping) {
+        //         ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+
+        //         if (pressedKey.Key == ConsoleKey.Escape) {
+        //             doneTyping = true;
+        //             escaped = true;
+        //         }
+
+        //         if (pressedKey.KeyChar == target[currentPos]) {
+        //             stopwatch.Stop();
+
+        //             keyTimes.Add(stopwatch.ElapsedMilliseconds);
+        //             Console.Write(pressedKey.KeyChar);
+        //             currentPos++;
+
+        //             if (currentMistake) {
+        //                 mistakes++;
+        //                 currentMistake = false;
+        //             }
+
+        //             stopwatch.Restart();
+        //         } else {
+        //             currentMistake = true;
+        //         }
+
+        //         if (currentPos >= target.Length) doneTyping = true;
+        //     }
+
+        //     Console.ResetColor();
+
+        //     if (!escaped) {
+        //         Console.Write(new String(' ', Math.Max(0, preferences.lineLength - target.Length)));
+
+        //         double wordsPerMinute = 0;
+        //         for (int i = 1; i < keyTimes.Count; i++) wordsPerMinute += keyTimes[i];
+        //         wordsPerMinute = ((double)(keyTimes.Count - 1) / 5.0) / (wordsPerMinute / (1000 * 60));
+        //         Console.Write($"    WPM: {Math.Round(wordsPerMinute)}".PadRight(11));
+
+        //         double accuracy = (double)(keyTimes.Count - mistakes) * 100.0 / keyTimes.Count;
+        //         Console.Write($"    Accuracy: {Math.Round(accuracy)}".PadRight(17));
+
+        //         qLearn.UpdateModel(target, keyTimes);
+        //         qLearn.FinishRound();
+        //     }
+
+        //     Console.WriteLine();
+
+        //     return escaped;
+        // }
+
         private static bool RunRound(QLearn qLearn) {
             string target = qLearn.RandomString(preferences.lineLength);
             Console.Write(target);
@@ -32,41 +100,87 @@ namespace KeyAI {
 
             bool doneTyping = false;
             bool escaped = false;
-            int currentPos = 0;
+            int pos = 0;
             int mistakes = 0;
-            bool currentMistake = false;
 
             Stopwatch stopwatch = new Stopwatch();
-            List<long> keyTimes = new List<long>();
+            List<Tuple<string, long>> keyTimes = new List<Tuple<string, long>>();
+            List<Tuple<char, long>> tempTimes = new List<Tuple<char, long>>();
 
             stopwatch.Start();
 
             while (!doneTyping) {
                 ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+                stopwatch.Stop();
 
                 if (pressedKey.Key == ConsoleKey.Escape) {
                     doneTyping = true;
                     escaped = true;
                 }
 
-                if (pressedKey.KeyChar == target[currentPos]) {
-                    stopwatch.Stop();
+                char keyChar = pressedKey.KeyChar;
+                tempTimes.Add(new Tuple<char, long>(keyChar, stopwatch.ElapsedMilliseconds));
 
-                    keyTimes.Add(stopwatch.ElapsedMilliseconds);
-                    Console.Write(pressedKey.KeyChar);
-                    currentPos++;
-                    
-                    if (currentMistake) {
+                if (keyChar == target[pos]) {
+                    Console.Write(target[pos]);
+                    if (pos >= 2) keyTimes.Add(new Tuple<string, long>(target.Substring(pos - 2, 3), tempTimes.Last().Item2));
+                    pos++;
+
+                    if (tempTimes.Count > 1) {
                         mistakes++;
-                        currentMistake = false;
                     }
 
-                    stopwatch.Restart();
+                    tempTimes.Clear();
+                    stopwatch.Reset();
                 } else {
-                    currentMistake = true;
+                    if (preferences.allowSkip && tempTimes.Count >= preferences.skipLength) {
+                        if (pos + preferences.skipLength < target.Length) {
+                            string subtarget = target.Substring(pos + 1, preferences.skipLength);
+                            List<Tuple<char, long>> newTimes = new List<Tuple<char, long>>();
+                            long prevTime = 0;
+                            int tempMistakes = 0;
+                            int subpos = 0;
+                            bool found = false;
+
+                            foreach (char c in subtarget) {
+                                bool mistakeMade = false;
+                                found = false;
+                                while (subpos < tempTimes.Count && !found) {
+                                    if (tempTimes[subpos].Item1 == c) {
+                                        found = true;
+                                        newTimes.Add(new Tuple<char, long>(tempTimes[subpos].Item1, tempTimes[subpos].Item2 - prevTime));
+                                        prevTime = tempTimes[subpos].Item2;
+
+                                        if (mistakeMade) {
+                                            tempMistakes++;
+                                            mistakeMade = false;
+                                        }
+                                    } else mistakeMade = true;
+                                    subpos++;
+                                }
+                                if (!found) break;
+                            }
+
+                            if (found) {
+                                mistakes += 1 + tempMistakes;
+                                Console.Write(target[pos]);
+                                pos++;
+
+                                foreach (Tuple<char, long> time in newTimes) {
+                                    if (pos >= 2) keyTimes.Add(new Tuple<string, long>(target.Substring(pos - 2, 3), time.Item2));
+                                    Console.Write(time.Item1);
+                                    pos++;
+                                }
+
+                                tempTimes.Clear();
+                                stopwatch.Reset();
+                            }
+                        }
+                    }
                 }
 
-                if (currentPos >= target.Length) doneTyping = true;
+                if (pos >= target.Length) doneTyping = true;
+                else stopwatch.Start();
             }
 
             Console.ResetColor();
@@ -75,14 +189,14 @@ namespace KeyAI {
                 Console.Write(new String(' ', Math.Max(0, preferences.lineLength - target.Length)));
 
                 double wordsPerMinute = 0;
-                for (int i = 1; i < keyTimes.Count; i++) wordsPerMinute += keyTimes[i];
+                for (int i = 1; i < keyTimes.Count; i++) wordsPerMinute += keyTimes[i].Item2;
                 wordsPerMinute = ((double)(keyTimes.Count - 1) / 5.0) / (wordsPerMinute / (1000 * 60));
                 Console.Write($"    WPM: {Math.Round(wordsPerMinute)}".PadRight(11));
 
                 double accuracy = (double)(keyTimes.Count - mistakes) * 100.0 / keyTimes.Count;
                 Console.Write($"    Accuracy: {Math.Round(accuracy)}".PadRight(17));
 
-                qLearn.UpdateModel(target, keyTimes);
+                qLearn.UpdateModel(keyTimes);
                 qLearn.FinishRound();
             }
 
@@ -189,7 +303,7 @@ namespace KeyAI {
 
                 modelData.OrderByDescending(d => d.Item2);
 
-                Console.ForegroundColor= ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("These are your slowest patterns:");
                 for (int i = 0; i < Math.Min(modelData.Count, 5); i++) {
                     Console.WriteLine($"{i + 1}. {modelData[i].Item1}");
