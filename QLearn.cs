@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 
 namespace KeyAI {
@@ -183,18 +184,21 @@ namespace KeyAI {
             double roundCompletion = (double)currentRound / (double)numRounds;
             explorationRate = roundCompletion * explorationLow + (1 - roundCompletion) * explorationHigh;
 
-            using (StreamWriter streamWriter = new StreamWriter("model.txt")) {
-                for (int i = 0; i < intToChar.Count; i++) {
-                    for (int j = 0; j < intToChar.Count; j++) {
-                        for (int k = 0; k < intToChar.Count; k++) {
-                            if (table[i, j, k] == 0) continue;
-                            char char1 = intToChar[i];
-                            char char2 = intToChar[j];
-                            char char3 = intToChar[k];
-                            streamWriter.WriteLine($"{char1}{char2}{char3} {table[i, j, k]}");
-                        }
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < intToChar.Count; i++) {
+                for (int j = 0; j < intToChar.Count; j++) {
+                    for (int k = 0; k < intToChar.Count; k++) {
+                        if (table[i, j, k] == 0) continue;
+                        char char1 = intToChar[i];
+                        char char2 = intToChar[j];
+                        char char3 = intToChar[k];
+                        stringBuilder.AppendFormat("{0}{1}{2} {3}\n", char1, char2, char3, table[i, j, k]);
                     }
                 }
+            }
+
+            using (StreamWriter streamWriter = new StreamWriter("model.txt")) {
+                streamWriter.Write(stringBuilder);
             }
         }
     }
