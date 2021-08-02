@@ -46,5 +46,5 @@ The following table describes the parameters that the user can change. At the mo
 | `includeLowercase`   | Boolean | Whether to include lowercase characters in the typing tutor. You probably want to keep this set to `true`. | `true`                                        |
 | `includeDigits`      | Boolean | Whether to include the digits 0 to 9 in the typing tutor.    | `false`                                       |
 | `includePunctuation` | Boolean | Whether to include the characters `.,!:;"'-()` in the typing tutor. | `false`                                       |
-| `allowSkip`          | Boolean | Experimental (untested) feature. Whether to allow skipping past one character (as long as the following characters match). Makes the typing tutor more lenient. | `true`                                        |
+| `allowSkip`          | Boolean | Whether to allow skipping past one character (as long as the following characters match). Makes the typing tutor more lenient. | `true`                                        |
 | `skipLength`         | Integer | The number of following characters that need to be matched in order to skip over the current one. | `3`                                           |
